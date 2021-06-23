@@ -10,12 +10,22 @@ import { ConfigService } from '@nestjs/config';
 export class ClientProxyMQ {
   constructor(private configService: ConfigService) {}
 
-  getClientProxyInstance(): ClientProxy {
+  getClientProxyUserInstance(): ClientProxy {
     return ClientProxyFactory.create({
       transport: Transport.RMQ,
       options: {
         urls: [`${this.configService.get<string>('RABBITMQ_URL')}`],
-        queue: 'auth',
+        queue: 'user',
+      },
+    });
+  }
+
+  getClientProxyAccessInstance(): ClientProxy {
+    return ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: [`${this.configService.get<string>('RABBITMQ_URL')}`],
+        queue: 'access',
       },
     });
   }
