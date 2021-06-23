@@ -1,32 +1,31 @@
 import {
-  Body,
   Controller,
-  Logger,
+  Headers,
   Post,
+  Request,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ClientProxyMQ } from 'src/proxyrmq/client-proxy';
-import { LoginDto } from './dtos/login.dto';
+import { AuthService } from './auth.service';
+import { User } from './interfaces/user.interface';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('api/v1/auth')
 export class AuthController {
-  private readonly logger = new Logger(AuthController.name);
+  constructor(private authService: AuthService) {}
 
-  constructor(private clientProxyMQ: ClientProxyMQ) {}
-
-  private clientAdminBackend = this.clientProxyMQ.getClientProxyInstance();
-
+  @UseGuards(LocalAuthGuard)
   @Post()
   @UsePipes(ValidationPipe)
-  async authenticate(@Body() loginDto: LoginDto) {
-    this.logger.log(`loginDto: ${JSON.stringify(loginDto)}`);
+  async authenticate(@Request() req: any): Promise<User> {
+    return req.user;
+  }
 
-    const user = await this.clientAdminBackend
-      .send('authenticate', loginDto)
-      .toPromise();
-
-    this.logger.log(`user: ${JSON.stringify(user)}`);
-    return user;
+  @Post('validate')
+  async validateToken(
+    @Headers('authorization') token: string,
+  ): Promise<boolean> {
+    return await this.authService.validate(token);
   }
 }
