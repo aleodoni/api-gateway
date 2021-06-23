@@ -24,6 +24,6 @@ async function bootstrap() {
       .format('YYYY-MM-DD HH:mm:ss.SSS');
   };
 
-  await app.listen(8080);
+  await app.listen(parseInt(process.env.PORT) || 8080);
 }
 bootstrap();
