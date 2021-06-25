@@ -14,10 +14,12 @@ export class AuthService {
   async authenticate(loginDto: LoginDto): Promise<User> {
     this.logger.log(`loginDto: ${JSON.stringify(loginDto)}`);
 
+    this.logger.log('----------------------1');
     const user: User = await this.clientAuthProxy
       .send('authenticate', loginDto)
       .toPromise();
 
+    this.logger.log('----------------------2');
     this.logger.log(`user: ${JSON.stringify(user)}`);
 
     return user;
