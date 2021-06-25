@@ -18,8 +18,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     let status: any;
 
-    console.log(exception);
-
     if (exception instanceof HttpException) {
       status = exception.getStatus();
     } else if (exception.message) {
